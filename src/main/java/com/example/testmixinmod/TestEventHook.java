@@ -9,7 +9,7 @@ import net.minecraftforge.eventbus.api.Event;
 
 public class TestEventHook {
     public static boolean onRotatingItemInItemFrame(ItemFrameEntity itemFrameEntity, PlayerEntity playerIn, Hand handIn) {
-        return MinecraftForge.EVENT_BUS.post(new RotateItemInItemFrameEvent((ItemFrameEntity) itemFrameEntity, playerIn, handIn));
+        return MinecraftForge.EVENT_BUS.post(new RotateItemInItemFrameEvent(itemFrameEntity, playerIn, handIn));
     }
 
     @Cancelable
