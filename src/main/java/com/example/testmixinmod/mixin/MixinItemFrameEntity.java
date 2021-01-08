@@ -24,16 +24,15 @@ public abstract class MixinItemFrameEntity extends HangingEntity {
                     value = "INVOKE",
                     target = "Lnet/minecraft/entity/item/ItemFrameEntity;playSound(Lnet/minecraft/util/SoundEvent;FF)V",
                     ordinal = 0),
-            require = 1,
             cancellable = true) // 以下のメソッドをItemFrameEntity#processInitialInteract内の最初のthis.playSound(…)の直前に注入する
-    private void onProcessInitialInteract(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResultType> cir) {
-        // （アイテムフレーム内のアイテムの回転処理の直前）
-        // イベントRotateItemInItemFrameEventを発生させる
+    private void onRotatingItemInItemFrame(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResultType> cir) {
+        // （アイテムフレーム内のアイテムを回転させる処理の直前）
+        // RotateItemInItemFrameEventを発生させる
         if (TestEventHook.onRotatingItemInItemFrame(ItemFrameEntity.class.cast(this), player, hand)) {  // 実行時にはMixinによってthisがItemFrameEntityのインスタンスになる
-            // イベントがキャンセルされたらprocessInitialInteractの処理を中止してActionResultType.CONSUMEを返す
-            // （アイテムフレーム内のアイテムの回転がキャンセルされる）
+            // イベントがキャンセルされたときはprocessInitialInteractの処理を中止してActionResultType.CONSUMEを返す
             cir.setReturnValue(ActionResultType.CONSUME);
             cir.cancel();
+            // （アイテムフレーム内のアイテムを回転させる処理がキャンセルされる）
         }
     }
 }
