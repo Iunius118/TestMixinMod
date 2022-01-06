@@ -3,6 +3,7 @@
   "mixins": [
     "MixinItemFrameEntity"
   ],
+  "refmap": "mixins.testmixinmod.refmap.json",
   "required": true,
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_17"
