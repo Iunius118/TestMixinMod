@@ -1,36 +1,38 @@
 package com.example.testmixinmod.mixin;
 
 import com.example.testmixinmod.TestEventHook;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.HangingEntity;
-import net.minecraft.entity.item.ItemFrameEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.decoration.HangingEntity;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ItemFrameEntity.class)
+@Mixin(ItemFrame.class)
 public abstract class MixinItemFrameEntity extends HangingEntity {
-    protected MixinItemFrameEntity(EntityType<? extends HangingEntity> type, World world) {
-        super(type, world);
+    protected MixinItemFrameEntity(EntityType<? extends HangingEntity> type, Level level) {
+        super(type, level);
     }
 
-    @Inject(method = "processInitialInteract",
+    @Inject(method = "interact",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/item/ItemFrameEntity;playSound(Lnet/minecraft/util/SoundEvent;FF)V",
+                    target = "Lnet/minecraft/world/entity/decoration/ItemFrame;playSound(Lnet/minecraft/sounds/SoundEvent;FF)V",
                     ordinal = 0),
-            cancellable = true) // 以下のメソッドをItemFrameEntity#processInitialInteract内の最初のthis.playSound(…)の直前に注入する
-    private void fireRotateItemInItemFrameEvent(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResultType> cir) {
-        // （アイテムフレーム内のアイテムを回転させる処理の直前）
+            cancellable = true)
+            // 以下のメソッドをItemFrame#interact内の最初のthis.playSound(…)の直前に注入する
+    private void fireRotateItemInItemFrameEvent(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+        // （アイテムフレームがプレイヤーから右クリックされてアイテムフレーム内のアイテムを回転させる処理の直前）
         // RotateItemInItemFrameEventを発生させる
-        if (TestEventHook.onRotatingItemInItemFrame(ItemFrameEntity.class.cast(this), player, hand)) {  // 実行時にはMixinによってthisがItemFrameEntityのインスタンスになる
-            // イベントがキャンセルされたときはprocessInitialInteractの処理を中止してActionResultType.CONSUMEを返す
-            cir.setReturnValue(ActionResultType.CONSUME);
+        // thisは実行時にMixinによってItemFrameのインスタンスになる
+        if (TestEventHook.onRotatingItemInItemFrame(ItemFrame.class.cast(this), player, hand)) {
+            // イベントがキャンセルされたときはItemFrame#interactの処理を中断してInteractionResult.CONSUMEを返す
+            cir.setReturnValue(InteractionResult.CONSUME);
             cir.cancel();
             // （アイテムフレーム内のアイテムを回転させる処理がキャンセルされる）
         }

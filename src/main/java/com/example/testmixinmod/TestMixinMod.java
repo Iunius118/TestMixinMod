@@ -1,8 +1,8 @@
 package com.example.testmixinmod;
 
-import net.minecraft.entity.item.ItemFrameEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -14,23 +14,28 @@ public class TestMixinMod {
     public static final Logger LOGGER = LogManager.getLogger();
 
     public TestMixinMod() {
+        // イベントリスナーを登録
+        // TestEventHook.RotateItemInItemFrameEvent発生時にTestMixinMod#onRotatingItemInItemFrameが呼ばれるようになる
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
     public void onRotatingItemInItemFrame(TestEventHook.RotateItemInItemFrameEvent event) {
-        ItemFrameEntity itemFrame = event.getItemFrameEntity();
-        ItemStack stack = itemFrame.getDisplayedItem();
-        String itemName = stack.getItem().getDisplayName(stack).getString();
-        PlayerEntity player = event.getPlayer();
-        String playerName = player.getDisplayName().getString();
+        Player player = event.getPlayer();
 
         if (player.isSteppingCarefully()) {
-            // Player is sneaking
-            LOGGER.info("{} in an item frame at {} was rotated by {}.", itemName, itemFrame.getPosition(), playerName);
+            // プレイヤーがスニーク状態のとき
+            ItemFrame itemFrame = event.getItemFrame();
+            ItemStack stack = itemFrame.getItem();
+            String itemName = stack.getItem().getName(stack).getString();
+            String playerName = player.getDisplayName().getString();
+
+            LOGGER.info("{} in an item frame at {} was rotated by {}.", itemName, itemFrame.blockPosition(), playerName);
         } else {
-            LOGGER.info("Only sneaking player can rotate the item in the item frame.");
+            // プレイヤーがスニーク状態でないとき
+            // イベントをキャンセルしてアイテムフレーム内のアイテムを回転させないようにする
             event.setCanceled(true);
+            LOGGER.info("Only sneaking player can rotate the item in the item frame.");
         }
     }
 }

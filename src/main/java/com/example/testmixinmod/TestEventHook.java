@@ -1,38 +1,52 @@
 package com.example.testmixinmod;
 
-import net.minecraft.entity.item.ItemFrameEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 public class TestEventHook {
-    public static boolean onRotatingItemInItemFrame(ItemFrameEntity itemFrameEntity, PlayerEntity playerIn, Hand handIn) {
-        return MinecraftForge.EVENT_BUS.post(new RotateItemInItemFrameEvent(itemFrameEntity, playerIn, handIn));
+    /**
+     * TestEventHook.RotateItemInItemFrameEventを発生させるメソッド。
+     *
+     * @see RotateItemInItemFrameEvent
+     * @param itemFrame アイテムを回転させられようとしているアイテムフレーム
+     * @param playerIn アイテムを回転させようとしたプレイヤー
+     * @param handIn アイテムを回転させようとしたプレイヤーの手（利き手か逆の手か）
+     * @return イベントがキャンセルされたか。キャンセルされるとtrueが返る
+     */
+    public static boolean onRotatingItemInItemFrame(ItemFrame itemFrame, Player playerIn, InteractionHand handIn) {
+        // ForgeのイベントバスにRotateItemInItemFrameEventのインスタンスをpostしてイベントを発生させる
+        return MinecraftForge.EVENT_BUS.post(new RotateItemInItemFrameEvent(itemFrame, playerIn, handIn));
     }
 
+    /**
+     * プレイヤーが右クリックでアイテムフレーム内のアイテムを回転させようとしたときに発生するイベント。<br>
+     * キャンセル可能。キャンセルするとアイテムフレーム内のアイテムは回転しない。
+     */
     @Cancelable
     public static class RotateItemInItemFrameEvent extends Event {
-        private final ItemFrameEntity itemFrame;
-        private final PlayerEntity entityPlayer;
-        private final Hand hand;
+        private final ItemFrame itemFrame;
+        private final Player player;
+        private final InteractionHand hand;
 
-        public RotateItemInItemFrameEvent(ItemFrameEntity itemFrameEntity, PlayerEntity playerIn, Hand handIn) {
-            itemFrame = itemFrameEntity;
-            entityPlayer = playerIn;
+        public RotateItemInItemFrameEvent(ItemFrame itemFrameIn, Player playerIn, InteractionHand handIn) {
+            itemFrame = itemFrameIn;
+            player = playerIn;
             hand = handIn;
         }
 
-        public PlayerEntity getPlayer() {
-            return entityPlayer;
+        public Player getPlayer() {
+            return player;
         }
 
-        public Hand getHand() {
+        public InteractionHand getHand() {
             return hand;
         }
 
-        public ItemFrameEntity getItemFrameEntity() {
+        public ItemFrame getItemFrame() {
             return itemFrame;
         }
     }
