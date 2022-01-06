@@ -6,6 +6,10 @@ Testing mixin mod of Forge 1.18.1
 
 プレイヤーがアイテムフレーム内のアイテムを右クリックして回転させようとしたときに発生するイベント`RotateItemInItemFrameEvent`を作成し、Mixinを利用して実際にそのイベントが発生するようにする。
 
+- [Forge modding環境へのMixinの導入](https://github.com/SpongePowered/Mixin/wiki/Mixins-on-Minecraft-Forge)
+- [Mixin config jsonの設定項目](https://github.com/SpongePowered/Mixin/wiki/Introduction-to-Mixins---The-Mixin-Environment#mixin-configuration-files)
+- [Callback Injectors（`@Inject`）の使用方法](https://github.com/SpongePowered/Mixin/wiki/Advanced-Mixin-Usage---Callback-Injectors)
+
 ### com.example.testmixinmod.TestMixinMod
 
 Modのコアクラス。作成したイベントが発生した際に呼び出されるリスナーメソッドを含む。
