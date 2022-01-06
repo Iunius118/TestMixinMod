@@ -14,7 +14,7 @@ Modのコアクラス。作成したイベントが発生した際に呼び出�
 
 イベントのクラス。イベントを発生させるためのメソッドと発生するイベント`RotateItemInItemFrameEvent`クラスを含む。
 
-### com.example.testmixinmod.mixin.MixinItemFrameEntity
+### com.example.testmixinmod.mixin.MixinItemFrame
 
 Mixinを使用するクラス。`RotateItemInItemFrameEvent`イベントを発生させ、またイベントがキャンセルされたときの処理をするために`ItemFrame.interact`に注入されるメソッドを含む。
 
@@ -22,11 +22,11 @@ Mixinを使用するクラス。`RotateItemInItemFrameEvent`イベントを発�
 
 1. プレイヤーがアイテムフレーム内のアイテムを右クリック
 2. `ItemFrame.interact`
-3. `MixinItemFrameEntity.fireRotateItemInItemFrameEvent`
+3. `MixinItemFrame.fireRotateItemInItemFrameEvent`
 4. `TestEventHook.onRotatingItemInItemFrame`（`TestEventHook.RotateItemInItemFrameEvent`を発生）
 5. Forge event bus
 6. `TestMixinMod.onRotatingItemInItemFrame`（イベントリスナー）
-7. `MixinItemFrameEntity.fireRotateItemInItemFrameEvent`
+7. `MixinItemFrame.fireRotateItemInItemFrameEvent`
    - イベントがキャンセルされなかった場合は`ItemFrame.interact`の処理を続行し、アイテムフレーム内のアイテムが回転する
    - イベントがキャンセルされた場合は`ItemFrame.interact`の処理を中断し、アイテムフレーム内のアイテムは回転しない
 

@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ItemFrame.class)
-public abstract class MixinItemFrameEntity extends HangingEntity {
-    protected MixinItemFrameEntity(EntityType<? extends HangingEntity> type, Level level) {
+public abstract class MixinItemFrame extends HangingEntity {
+    protected MixinItemFrame(EntityType<? extends HangingEntity> type, Level level) {
         super(type, level);
     }
 
